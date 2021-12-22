@@ -347,6 +347,7 @@ func TestDecodeMediaPlaylistExtInfNonStrict2(t *testing.T) {
 #EXT-X-VERSION:3
 #EXT-X-MEDIA-SEQUENCE:0
 %s
+/s.ts
 `
 
 	tests := []struct {
@@ -356,18 +357,18 @@ func TestDecodeMediaPlaylistExtInfNonStrict2(t *testing.T) {
 		wantSegment *MediaSegment
 	}{
 		// strict mode on
-		{true, "#EXTINF:10.000,", false, &MediaSegment{Duration: 10.0, Title: ""}},
-		{true, "#EXTINF:10.000,Title", false, &MediaSegment{Duration: 10.0, Title: "Title"}},
-		{true, "#EXTINF:10.000,Title,Track", false, &MediaSegment{Duration: 10.0, Title: "Title,Track"}},
+		{true, "#EXTINF:10.000,", false, &MediaSegment{Duration: 10.0, URI: "/s.ts", Title: ""}},
+		{true, "#EXTINF:10.000,Title", false, &MediaSegment{Duration: 10.0, URI: "/s.ts", Title: "Title"}},
+		{true, "#EXTINF:10.000,Title,Track", false, &MediaSegment{Duration: 10.0, URI: "/s.ts", Title: "Title,Track"}},
 		{true, "#EXTINF:invalid,", true, nil},
 		{true, "#EXTINF:10.000", true, nil},
 
 		// strict mode off
-		{false, "#EXTINF:10.000,", false, &MediaSegment{Duration: 10.0, Title: ""}},
-		{false, "#EXTINF:10.000,Title", false, &MediaSegment{Duration: 10.0, Title: "Title"}},
-		{false, "#EXTINF:10.000,Title,Track", false, &MediaSegment{Duration: 10.0, Title: "Title,Track"}},
-		{false, "#EXTINF:invalid,", false, &MediaSegment{Duration: 0.0, Title: ""}},
-		{false, "#EXTINF:10.000", false, &MediaSegment{Duration: 10.0, Title: ""}},
+		{false, "#EXTINF:10.000,", false, &MediaSegment{Duration: 10.0, URI: "/s.ts", Title: ""}},
+		{false, "#EXTINF:10.000,Title", false, &MediaSegment{Duration: 10.0, URI: "/s.ts", Title: "Title"}},
+		{false, "#EXTINF:10.000,Title,Track", false, &MediaSegment{Duration: 10.0, URI: "/s.ts", Title: "Title,Track"}},
+		{false, "#EXTINF:invalid,", false, &MediaSegment{Duration: 0.0, URI: "/s.ts", Title: ""}},
+		{false, "#EXTINF:10.000", false, &MediaSegment{Duration: 10.0, URI: "/s.ts", Title: ""}},
 	}
 
 	for _, test := range tests {
@@ -488,6 +489,27 @@ func TestDecodeMediaPlaylistAutoDetectExtend(t *testing.T) {
 	if pp.Count() != exp {
 		t.Errorf("Media segment count %v != %v", pp.Count(), exp)
 	}
+}
+
+func TestDecodeMediaPlaylistWithBlankLineAfterMap(t *testing.T) {
+	f, err := os.Open("sample-playlists/media-playlist-large-with-attributes.m3u8")
+	if err != nil {
+		t.Fatal(err)
+	}
+	p, err := NewMediaPlaylist(10000, 10000)
+	if err != nil {
+		t.Fatalf("Create media playlist failed: %s", err)
+	}
+	err = p.DecodeFrom(bufio.NewReader(f), true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	//fmt.Printf("Playlist object: %+v\n", p)
+	// check parsed values
+
+	// TODO check other values…
+	//fmt.Printf("%+v\n", p.Key)
+	//fmt.Println(p.Encode().String())
 }
 
 // Test for FullTimeParse of EXT-X-PROGRAM-DATE-TIME
