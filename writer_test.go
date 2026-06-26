@@ -162,7 +162,8 @@ func TestProgramDateTimeForMediaPlaylist(t *testing.T) {
 
 // Create new media playlist
 // Add two segments to media playlist with duration 9.0 and 9.1.
-// Target duration must be set to nearest greater integer (= 10).
+// Target duration must be set to the segment duration rounded to the
+// nearest integer (= 9), per RFC 8216 section 4.3.3.1.
 func TestTargetDurationForMediaPlaylist(t *testing.T) {
 	p, e := NewMediaPlaylist(1, 2)
 	if e != nil {
@@ -176,8 +177,8 @@ func TestTargetDurationForMediaPlaylist(t *testing.T) {
 	if e != nil {
 		t.Errorf("Add 2nd segment to a media playlist failed: %s", e)
 	}
-	if p.TargetDuration < 10.0 {
-		t.Errorf("Target duration must = 10 (nearest greater integer to durations 9.0 and 9.1)")
+	if p.TargetDuration != 9.0 {
+		t.Errorf("Target duration must = 9 (durations 9.0 and 9.1 rounded to nearest integer), got %v", p.TargetDuration)
 	}
 }
 
