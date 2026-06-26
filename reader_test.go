@@ -1,11 +1,11 @@
 /*
- Playlist parsing tests.
+Playlist parsing tests.
 
- Copyright 2013-2019 The Project Developers.
- See the AUTHORS and LICENSE files at the top-level directory of this distribution
- and at https://github.com/grafov/m3u8/
+Copyright 2013-2019 The Project Developers.
+See the AUTHORS and LICENSE files at the top-level directory of this distribution
+and at https://github.com/grafov/m3u8/
 
- ॐ तारे तुत्तारे तुरे स्व
+ॐ तारे तुत्तारे तुरे स्व
 */
 package m3u8
 
@@ -86,6 +86,41 @@ func TestDecodeMasterPlaylistWithAlternatives(t *testing.T) {
 	}
 	if len(p.Alternatives) != 9 {
 		t.Fatalf("not all alternatives in master playlist parsed (%v != 9)", len(p.Alternatives))
+	}
+	// TODO check other values
+	for i, v := range p.Variants {
+		if i == 0 && len(v.Alternatives) != 3 {
+			t.Fatalf("not all alternatives from #EXT-X-MEDIA parsed (has %d but should be 3", len(v.Alternatives))
+		}
+		if i == 1 && len(v.Alternatives) != 3 {
+			t.Fatalf("not all alternatives from #EXT-X-MEDIA parsed (has %d but should be 3", len(v.Alternatives))
+		}
+		if i == 2 && len(v.Alternatives) != 3 {
+			t.Fatalf("not all alternatives from #EXT-X-MEDIA parsed (has %d but should be 3", len(v.Alternatives))
+		}
+		if i == 3 && len(v.Alternatives) > 0 {
+			t.Fatal("should not be alternatives for this variant")
+		}
+	}
+	// fmt.Println(p.Encode().String())
+}
+
+func TestDecodeMasterPlaylistWithAlternativesB(t *testing.T) {
+	f, err := os.Open("sample-playlists/master-with-alternatives-b.m3u8")
+	if err != nil {
+		t.Fatal(err)
+	}
+	p := NewMasterPlaylist()
+	err = p.DecodeFrom(bufio.NewReader(f), false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// check parsed values
+	if p.ver != 3 {
+		t.Errorf("Version of parsed playlist = %d (must = 3)", p.ver)
+	}
+	if len(p.Variants) != 4 {
+		t.Fatal("not all variants in master playlist parsed")
 	}
 	// TODO check other values
 	for i, v := range p.Variants {
@@ -972,6 +1007,41 @@ func TestDecodeMediaPlaylistStartTime(t *testing.T) {
 	}
 	if pp.StartTime != float64(8.0) {
 		t.Errorf("Media segment StartTime != 8: %f", pp.StartTime)
+	}
+}
+
+func TestDecodeMediaPlaylistWithCueOutCueIn(t *testing.T) {
+	f, err := os.Open("sample-playlists/media-playlist-with-cue-out-in-without-oatcls.m3u8")
+	if err != nil {
+		t.Fatal(err)
+	}
+	p, listType, err := DecodeFrom(bufio.NewReader(f), true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pp := p.(*MediaPlaylist)
+	CheckType(t, pp)
+	if listType != MEDIA {
+		t.Error("Sample not recognized as media playlist.")
+	}
+
+	if pp.Segments[5].SCTE.CueType != SCTE35Cue_Start {
+		t.Errorf("EXT-CUE-OUT must result in SCTE35Cue_Start")
+	}
+	if pp.Segments[5].SCTE.Time != 0 {
+		t.Errorf("EXT-CUE-OUT without duration must not have Time set")
+	}
+	if pp.Segments[9].SCTE.CueType != SCTE35Cue_End {
+		t.Errorf("EXT-CUE-IN must result in SCTE35Cue_End")
+	}
+	if pp.Segments[30].SCTE.CueType != SCTE35Cue_Start {
+		t.Errorf("EXT-CUE-OUT must result in SCTE35Cue_Start")
+	}
+	if pp.Segments[30].SCTE.Time != 180 {
+		t.Errorf("EXT-CUE-OUT:180.0 must have time set to 180")
+	}
+	if pp.Segments[60].SCTE.CueType != SCTE35Cue_End {
+		t.Errorf("EXT-CUE-IN must result in SCTE35Cue_End")
 	}
 }
 

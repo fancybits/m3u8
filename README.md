@@ -2,6 +2,22 @@
 M3U8 [![](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go#video)
 ====
 
+> [!IMPORTANT]
+>
+> The project support suspended and code moved to read only archive.
+> https://github.com/grafov/m3u8/issues/225
+>
+> The project has a successor:
+> [https://github.com/Eyevinn/hls-m3u8](https://github.com/Eyevinn/hls-m3u8). 
+>
+> I encourage you to migrate to the new library,
+> [Eyevinn/hls-m3u8](https://github.com/Eyevinn/hls-m3u8), as HLS continues to
+> evolve and the new library supports newer features.
+
+
+About
+-----
+
 This is the most complete opensource library for parsing and generating of M3U8 playlists
 used in HTTP Live Streaming (Apple HLS) for internet video translations.
 
@@ -20,6 +36,7 @@ Versions 0.8 and below was covered by GPL v3. License was changed from the versi
 
 See the list of the library authors at [AUTHORS](AUTHORS) file.
 
+
 Install
 -------
 
@@ -27,13 +44,12 @@ Install
 
 or get releases from https://github.com/grafov/m3u8/releases
 
-Documentation [![Go Walker](http://gowalker.org/api/v1/badge)](http://gowalker.org/github.com/grafov/m3u8) [![GoDoc](https://godoc.org/github.com/grafov/m3u8?status.svg)](https://godoc.org/github.com/grafov/m3u8)
+Documentation [![GoDoc](https://godoc.org/github.com/grafov/m3u8?status.svg)](https://pkg.go.dev/github.com/grafov/m3u8)
 -------------
 
 Package online documentation (examples included) available at:
 
-* http://gowalker.org/github.com/grafov/m3u8
-* http://godoc.org/github.com/grafov/m3u8
+* http://pkg.go.dev/github.com/grafov/m3u8
 
 Supported by the HLS protocol tags and their library support explained in [M3U8 cheatsheet](M3U8.md).
 
@@ -125,19 +141,26 @@ Project status [![Go Report Card](https://goreportcard.com/badge/grafov/m3u8)](h
 
 Code coverage: https://gocover.io/github.com/grafov/m3u8
 
-Project maintainers:
+Project maintainers
+--------------------
+
+Thank to all people who contrubuted to the code and maintain
+it. Especially thank to the maintainers who involved in the project
+actively in the past and helped to keep code actual:
 
 * Lei Gao @leikao
 * Bradley Falzon @bradleyfalzon
-* Alexander Grafov @grafov
 
-Roadmap
--------
+New maitainers are welcome.
 
-To version 1.0:
+Alternatives
+-------------
 
-* Support all M3U8 tags up to latest version of specs.
-* Code coverage by unit tests up to 90%
+On the project start in 2013 there was no any other libs in Go for m3u8. Later the alternatives came. Some of them may be more fit current standards.
+
+* https://github.com/hr8/rosso
+
+Drop a link in issue if you know other projects.
 
 FYI M3U8 parsing/generation in other languages
 ------------------------------------------
